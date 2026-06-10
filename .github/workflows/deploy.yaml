@@ -7,7 +7,7 @@ on:
 
 # FIX 2: Acknowledge the June 2026 deprecation and force the modern Node 24 runner
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 # FIX 3: Explicitly grant Git read permissions to stop the 128 Error
 permissions:
