@@ -1,10 +1,17 @@
 name: Enterprise IoT Production Deployment
 
-# Triggers the pipeline automatically when you push code to the main branch
 on:
   push:
     branches:
       - main
+
+# FIX 2: Acknowledge the June 2026 deprecation and force the modern Node 24 runner
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+# FIX 3: Explicitly grant Git read permissions to stop the 128 Error
+permissions:
+  contents: read
 
 jobs:
   deploy-infrastructure-and-ui:
@@ -24,7 +31,7 @@ jobs:
       - name: 3. Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '18' # This is for your Angular build, not the GitHub runner
 
       - name: 4. Deploy Serverless Backend (AWS SAM)
         run: |
