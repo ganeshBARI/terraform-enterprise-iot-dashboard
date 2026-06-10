@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Enterprise IoT Dashboard - Step 2 Baseline
+
+Resources:
+  # Proving Block 4 of Architecture: The Serverless Compute Layer
+  GetDevicesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get-devices/
+      Handler: app.lambdaHandler
+      Runtime: nodejs18.x
+      Timeout: 10
+      Events:
+        # Proving Block 3 of Architecture: The Front Door API REST Interface
+        GetDevicesApi:
+          Type: Api
+          Properties:
+            Path: /devices
+            Method: get
+
+Outputs:
+  IotDashboardApiEndpoint:
+    Description: "The public HTTP live URL for your frontend application to call"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/devices/"

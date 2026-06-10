@@ -1,0 +1,40 @@
+name: Enterprise IoT Production Deployment
+
+# Triggers the pipeline automatically when you push code to the main branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-infrastructure-and-ui:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 2. Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1 
+
+      - name: 3. Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 4. Deploy Serverless Backend (AWS SAM)
+        run: |
+          cd backend
+          sam build
+          sam deploy --stack-name enterprise-iot-backend --resolve-s3 --capabilities CAPABILITY_IAM --no-confirm-changeset --no-fail-on-empty-changeset
+
+      - name: 5. Build and Deploy Angular UI (AWS S3)
+        run: |
+          cd iot-dashboard
+          npm install
+          npx ng build --configuration production
+          aws s3 sync dist/iot-dashboard/browser/ s3://enterprise-iot-ui-terraform-753167245378-ap-south-1-an --delete

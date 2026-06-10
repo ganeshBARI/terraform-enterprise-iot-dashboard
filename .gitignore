@@ -1,0 +1,8 @@
+# Node Dependencies
+node_modules/
+dist/
+.angular/
+
+# AWS SAM Builds
+.aws-sam/
+samconfig.toml
