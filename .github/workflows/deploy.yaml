@@ -33,7 +33,7 @@ jobs:
       - name: 3. Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-version: '18' # This is for your Angular build, not the GitHub runner
+          node-version: '24' # This is for your Angular build, not the GitHub runner
 
       - name: 4. Deploy Serverless Backend (AWS SAM)
         run: |
