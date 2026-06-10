@@ -1,0 +1,27 @@
+<div style="padding: 24px; font-family: sans-serif;">
+  <h2>Enterprise IoT Device Dashboard</h2>
+  <p>Real-time serverless operational status telemetry data streaming from AWS and MongoDB.</p>
+
+  <div *ngIf="isLoading" style="padding: 16px; color: #666; font-style: italic;">
+    Loading operational cloud assets...
+  </div>
+
+  <div *ngIf="errorMessage" style="padding: 16px; color: darkred; font-weight: bold;">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage">
+    <div *ngIf="devices.length === 0" style="padding: 16px;">
+      No operational system profiles detected inside persistent layers.
+    </div>
+
+    <div style="display: grid; gap: 16px; margin-top: 20px;">
+      <div *ngFor="let device of devices; trackBy: trackByDeviceId" style="border: 1px solid #ccc; padding: 16px; border-radius: 4px;">
+        <h3 style="margin: 0 0 8px 0;">{{ device.name }}</h3>
+        <p style="margin: 4px 0;"><strong>Asset Identifier:</strong> {{ device.id }}</p>
+        <p style="margin: 4px 0;"><strong>Operational State:</strong> {{ device.status }}</p>
+        <p style="margin: 4px 0;"><strong>Geographic Placement:</strong> {{ device.location }}</p>
+      </div>
+    </div>
+  </div>
+</div>
