@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.1065.0",
     "mongodb": "^7.2.0"
   }
 }

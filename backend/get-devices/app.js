@@ -4,17 +4,49 @@ if (typeof crypto === 'undefined') {
 }
 const { MongoClient } = require('mongodb');
 
-const uri = "mongodb+srv://ganeshTerraform:zGm9msfONoKdKMEA@terraform.w6ampsx.mongodb.net/?retryWrites=true&w=majority";
+// const uri = "mongodb+srv://ganeshTerraform:zGm9msfONoKdKMEA@terraform.w6ampsx.mongodb.net/?retryWrites=true&w=majority";
+const { SecretsManagerClient, GetSecretValueCommand } = require("@aws-sdk/client-secrets-manager");
+const client = new SecretsManagerClient({ region: "ap-south-1" });
+
 
 let cachedClient = null;
 let cachedDb = null;
+let cachedSecret = null;
+
+async function getDbUri() {
+    if (cachedSecret) return cachedSecret;
+
+    try {
+        const response = await client.send(new GetSecretValueCommand({ 
+            SecretId: "prod/iot/mongodb" 
+        }));
+        const secret = JSON.parse(response.SecretString);
+        cachedSecret = secret.MONGODB_URI;
+        return cachedSecret;
+    } catch (err) {
+        console.error("Error fetching secrets:", err);
+        throw new Error("Could not retrieve DB credentials");
+    }
+}
+
+// exports.handler = async (event) => {
+//     const mongoUri = await getDbUri();
+    
+//     // Now use mongoUri to connect to your database...
+//     // const client = await MongoClient.connect(mongoUri);
+    
+//     return {
+//         statusCode: 200,
+//         body: JSON.stringify({ message: "Connected securely!" })
+//     };
+// };
 
 async function connectToDatabase() {
     if (cachedClient && cachedDb) {
         return { client: cachedClient, db: cachedDb };
     }
 
-    const client = new MongoClient(uri, {
+    const client = new MongoClient(await getDbUri(), {
         connectTimeoutMS: 5000,
         socketTimeoutMS: 45000,
     });

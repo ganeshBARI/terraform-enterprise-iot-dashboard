@@ -11,6 +11,9 @@ Resources:
       Handler: app.lambdaHandler
       Runtime: nodejs18.x
       Timeout: 10
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: arn:aws:secretsmanager:ap-south-1:753167245378:secret:prod/iot/mongodb-NwhetF
       Events:
         # Proving Block 3 of Architecture: The Front Door API REST Interface
         GetDevicesApi:
@@ -23,3 +26,14 @@ Outputs:
   IotDashboardApiEndpoint:
     Description: "The public HTTP live URL for your frontend application to call"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/devices/"
+
+ApiUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      UsagePlanName: "EnterpriseDeviceUsagePlan"
+      Throttle:
+        BurstLimit: 100
+        RateLimit: 50
+      ApiStages:
+        - ApiId: !Ref MyApi
+          Stage: Prod
